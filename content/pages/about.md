@@ -52,5 +52,5 @@ I spend most of my time reverse engineering malware, analyzing forensic artifact
 | TECHCOMFEST 2026 | UKM PCC Politeknik Negeri Semarang | Challenge Author |
 | NETCOMP 2026 | FORKOMTRI SV UGM | Challenge Author |
 | Find IT CTF 2026 | DTETI FT UGM | Challenge Author |
-
+| Wreck IT 7.0 2026 | National Cyber and Crypto Polytechnic | Challenge Author |
 
