@@ -35,22 +35,22 @@ I spend most of my time reverse engineering malware, analyzing forensic artifact
 
 | Event | Organizer | Role |
 |------|----------|------|
-| Wreck IT 5.0 | National Cyber and Crypto Polytechnic | Challenge Author, Head of Organizer |
-| Cyber Specter’s Cyber Hunt 2024 | Cyber Specters | Challenge Author |
-| Sanapati Cyberhunt 2024 | National Cyber and Crypto Polytechnic | Challenge Author, Organizer |
-| Cyber Ops Clash 2024 | Meta4Sec & Cyber Specters | Challenge Author |
-| IT-Del CTF 2024 | Del Institute of Technology | Challenge Author, Infrastructure |
-| SNI CTF 2024 | SNI Cybersecurity Team | Challenge Author |
-| Cyber Sentrix 2024 | Cyber Specters | Challenge Author |
-| Sanapati Cyberhunt 2025 | National Cyber and Crypto Polytechnic | Challenge Author, Organizer |
 | Cyber Jawara National 2024 | CSIRT.id, IdNSA, SKSD | Challenge Author (Final Round) |
+| Cyber Ops Clash 2024 | Meta4Sec & Cyber Specters | Challenge Author |
 | Cyber Ops Clash 2025 | Meta4Sec & Cyber Specters | Challenge Author |
-| INTECHFEST 2025 | Bali State Polytechnic Computer Club | Challenge Author |
-| Wreck IT 6.0 | National Cyber and Crypto Polytechnic | Challenge Author |
+| Cyber Sentrix 2024 | Cyber Specters | Challenge Author |
+| Cyber Specter's Cyber Hunt 2024 | Cyber Specters | Challenge Author |
+| Find IT CTF 2026 | DTETI FT UGM | Challenge Author |
 | GEMASTIK XVIII 2025 | Telkom University, Puspresnas | Challenge Author |
+| INTECHFEST 2025 | Bali State Polytechnic Computer Club | Challenge Author |
+| IT-Del CTF 2024 | Del Institute of Technology | Challenge Author, Infrastructure |
+| NETCOMP 2026 | FORKOMTRI SV UGM | Challenge Author |
+| Sanapati Cyberhunt 2024 | National Cyber and Crypto Polytechnic | Challenge Author, Organizer |
+| Sanapati Cyberhunt 2025 | National Cyber and Crypto Polytechnic | Challenge Author, Organizer |
+| SNI CTF 2024 | SNI Cybersecurity Team | Challenge Author |
 | SNI CTF 2025 | SNI Cybersecurity Team | Challenge Author |
 | TECHCOMFEST 2026 | UKM PCC Politeknik Negeri Semarang | Challenge Author |
-| NETCOMP 2026 | FORKOMTRI SV UGM | Challenge Author |
-| Find IT CTF 2026 | DTETI FT UGM | Challenge Author |
+| Wreck IT 5.0 | National Cyber and Crypto Polytechnic | Challenge Author, Head of Organizer |
+| Wreck IT 6.0 | National Cyber and Crypto Polytechnic | Challenge Author |
 | Wreck IT 7.0 | National Cyber and Crypto Polytechnic | Challenge Author |
 
