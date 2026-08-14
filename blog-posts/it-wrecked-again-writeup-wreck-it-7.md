@@ -330,7 +330,7 @@ pwndbg> x/34bx 0x7f4543cfb000
 0x7f4543cfb020: 0xe5    0x30
 ```
 
-<img width="auto" height="auto" alt="image" src="https://github.com/user-attachments/assets/eca6902a-d836-4920-8ba0-5c5882039e14" />
+![image](https://github.com/user-attachments/assets/eca6902a-d836-4920-8ba0-5c5882039e14)
 
 ### Solving the Challenge
 
