@@ -330,6 +330,8 @@ pwndbg> x/34bx 0x7f4543cfb000
 0x7f4543cfb020: 0xe5    0x30
 ```
 
+<img width="auto" height="auto" alt="image" src="https://github.com/user-attachments/assets/eca6902a-d836-4920-8ba0-5c5882039e14" />
+
 ### Solving the Challenge
 
 Once you have the RWX base address and the ciphertext blob pulled out of the dump, recovering the flag is just replaying the same KDF chain on the solver side and running the cipher steps backwards.
