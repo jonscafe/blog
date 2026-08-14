@@ -312,14 +312,34 @@ the rwx region which probably where the shellcode is residing.
 
 Loading proc.dmp into GDB with pwndbg and disassembling the entry point of this RWX region reveals the shellcode behavior. It derives multiple 64-bit encryption keys directly from the base address of the RWX page (`0x7f4543d35000`) using bitwise rotations and multiplications.
 
-It opens /secret.txt via SYS_open, dynamically allocates a buffer via sys_mmap, reads the file content into this buffer, and subsequently deletes the file from disk using SYS_unlink.
+It opens `/secret.txt` via SYS_open, dynamically allocates a buffer via sys_mmap, reads the file content into this buffer, and subsequently deletes the file from disk using SYS_unlink.
 
 And then applies an 8-byte block shift, multi-round XOR operations against derived keys, and an index permutation loop in-place on the allocated buffer.
 
-The shellcode exfiltrates the ciphertext over a TCP socket (192.168.154.1:4444), zeroes out the stack frame to destroy encryption keys, and enters an infinite SYS_pause loop.
+The shellcode exfiltrates the ciphertext over a TCP socket (`192.168.154.1:4444`), zeroes out the stack frame to destroy encryption keys, and enters an infinite SYS_pause loop.
 
 Due to Linux x86_64's top-down memory allocation strategy, the SYS_mmap call placed the heap/scratch buffer into the first available contiguous gap right below ld-linux, mapping it at `0x7f4543cfb000`.
 
+And by checking the memory boundaries, 0x7f4543cfe000 is clearly ld-linux.so ([load14]-[load19]). So the whole layout basically looks like this:
+
+```
+▲ [0x000000000000 - LOWEST VIRTUAL ADDRESS]
+│
+├─ 0x400000        : Binary Base (.text, .rodata, .data)
+├─ 0x97b000        : Heap (brk)
+│
+├─ 0x7f4543ac1000  : Anonymous Mmap (TLS / Runtime Allocations)
+├─ 0x7f4543ac4000  : libc.so.6 Base
+├─ 0x7f4543ce0000  : libc BSS / Anonymous Segment
+├─ 0x7f4543cfb000  : Ciphertext Buffer (load13)
+├─ 0x7f4543cfe000  : ld-linux.so Base (load14)
+├─ 0x7f4543d35000  : Injected Shellcode RWX Stub (load17)
+│
+├─ 0x7ffc0d431000  : User Stack
+└─ 0x7ffc0d57c000  : vDSO / Kernel Mapping
+│
+▼ [0x7fffffffffff - HIGHEST VIRTUAL ADDRESS]
+```
 This anonymous mapping yields the 34-byte ciphertext:
 ```
 pwndbg> x/34bx 0x7f4543cfb000
