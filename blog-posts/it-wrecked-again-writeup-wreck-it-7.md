@@ -238,19 +238,6 @@ offset  Session          OpsLease
 
 So if glibc hands the just-freed `Session` chunk back out for the next `OpsLease` allocation, whatever bytes you put into the `OpsLease` land at the same addresses the old `Session` used to occupy, including that last field, the function pointer.
 
-There's actually a comment left in the source explaining why `prime_lease` uses `malloc` instead of `calloc` here:
-
-```c
-/*
- * Deliberately use malloc + memset here instead of calloc. On Ubuntu 22.04
- * glibc, calloc in this allocation pattern does not reliably hand back the
- * just-freed Session chunk, which breaks the intended UAF overlap.
- */
-lease = malloc(sizeof(*lease));
-```
-
-`calloc` on this glibc would sometimes not reuse the tcache entry the way `malloc` does, which would break the overlap. Small detail, but it's the difference between the exploit working every time or being flaky.
-
 Menu option 7 (`restore lease from hex template`) is the one that actually gives you control over the bytes. It lets you send a raw hex blob that gets `decode_hex_blob`'d straight onto the freshly allocated `OpsLease`, byte for byte, with no validation on the function pointer field at all. So an attacker can craft a fake `OpsLease` where `completion_hook` (offset 0x48) is any address they want.
 
 Offset 0x48 in the old `Session` layout is `status_cb`, the function pointer `run_status_callback` (menu option 3) blindly calls:
