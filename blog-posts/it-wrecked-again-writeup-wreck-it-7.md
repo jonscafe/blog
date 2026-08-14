@@ -4,7 +4,7 @@ pubDate: "2026-08-14"
 description: 'Write-up for a forensic challenge titled "It Wrecked (Again)" which I authored for Wreck IT 7.0 General Qualification.'
 ---
 
-This challenge was the continuation of the Wreck IT 6.0 challenge titled "It Wrecked," which had a similar concept to this challenge (Linux forensics on a vulnerable binary).
+This challenge was the continuation of the Wreck IT 6.0 challenge titled "It Wrecked", which had a similar concept to this challenge (Linux forensics on a vulnerable binary).
 
 ### Background
 The idea for this challenge came when I was playtesting its intended behavior. While I was carving for stealer traffic evidence from the memory using tools like bulk_extractor or MemProcFS, I couldn't find anything even though the stealer server received the stolen packets. This issue turned into a new idea for me with the logic of "if it got processed in memory, it should exist there." So I repeated the playtest and found out that my assumption was indeed correct: the ciphertext resides in the anonymous memory of the process.
@@ -238,20 +238,9 @@ offset  Session          OpsLease
 
 So if glibc hands the just-freed `Session` chunk back out for the next `OpsLease` allocation, whatever bytes you put into the `OpsLease` land at the same addresses the old `Session` used to occupy, including that last field, the function pointer.
 
-There's actually a comment left in the source explaining why `prime_lease` uses `malloc` instead of `calloc` here:
-
-```c
-/*
- * Deliberately use malloc + memset here instead of calloc. On Ubuntu 22.04
- * glibc, calloc in this allocation pattern does not reliably hand back the
- * just-freed Session chunk, which breaks the intended UAF overlap.
- */
-lease = malloc(sizeof(*lease));
-```
-
 `calloc` on this glibc would sometimes not reuse the tcache entry the way `malloc` does, which would break the overlap. Small detail, but it's the difference between the exploit working every time or being flaky.
 
-Menu option 7 (`restore lease from hex template`) is the one that actually gives you control over the bytes. It lets you send a raw hex blob that gets `decode_hex_blob`'d straight onto the freshly allocated `OpsLease`, byte for byte, with no validation on the function pointer field at all. So an attacker can craft a fake `OpsLease` where `completion_hook` (offset 0x48) is any address they want.
+Menu option 7 is the one that actually gives you control over the bytes. It lets you send a raw hex blob that gets decoded straight onto the freshly allocated `OpsLease`, byte for byte, with no validation on the function pointer field at all. So an attacker can craft a fake `OpsLease` where `completion_hook` (offset 0x48) is any address they want.
 
 Offset 0x48 in the old `Session` layout is `status_cb`, the function pointer `run_status_callback` (menu option 3) blindly calls:
 
@@ -268,7 +257,7 @@ g_active_session->status_cb(client_fd, g_active_session);
 The second mapping (the RW-only one holding the ciphertext) won't get flagged by `malfind` the same way since it's not executable, so you're better off dumping the full set of anonymous mappings for the compromised PID and picking out the blob that isn't zero and isn't obviously plaintext. It tends to sit close to the flagged RWX page in the address space since both were created back to back by the same process, which helps narrow it down once you know what you're looking for.
 
 ### Carving the Memory
-When this challenge was released for the Qualification, there was a tool called "MemNixFS," which is the Linux-targeted version of MemProcFS. This tool allowed people to parse a memory dump and treat it like a disk dump. We can leverage this tool specifically to carve the ciphertext from the vulnerable binary's process memory.
+When this challenge was released for the Qualification, there was a tool called "[MemNixFS](https://github.com/MemNixFS/MemNixFS)", which is the Linux-targeted version of MemProcFS. This tool allowed people to parse a memory dump and treat it like a disk dump. We can leverage this tool specifically to carve the ciphertext from the vulnerable binary's process memory.
 
 When I did the playtest, MemNixFS was not yet released, so my own intended way was to carve it directly from the LiME file by inspecting the strings related to the binary. But if you think about it, it might sound like guesswork, yet there are a lot of other options I haven't explored yet.
 
