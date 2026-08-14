@@ -4,10 +4,10 @@ pubDate: "2026-08-14"
 description: 'Write-up for a forensic challenge titled "It Wrecked (Again)" which I authored for Wreck IT 7.0 General Qualification.'
 ---
 
-Write-up for a challenge titled "It Wrecked (Again)" which I authored for Wreck IT 7.0 General Qualification. This challenge was the continuation of the Wreck IT 6.0 challenge titled "It Wrecked", which had a similar concept to this challenge (Linux forensics on a vulnerable binary).
+This challenge was the continuation of the Wreck IT 6.0 challenge titled "It Wrecked," which had a similar concept to this challenge (Linux forensics on a vulnerable binary).
 
 ### Background
-The idea for this challenge came when I was playtesting its intended behavior. While I was carving for stealer traffic evidence from the memory using tools like bulk_extractor or MemProcFS, I couldn't find anything even though the stealer server received the stolen packets. This issue turned into a new idea for me with the logic of "if it got processed in memory, it should exist there." So I repeated the playtest and found out that my assumption was indeed correct, the ciphertext resides in the anonymous memory of the process.
+The idea for this challenge came when I was playtesting its intended behavior. While I was carving for stealer traffic evidence from the memory using tools like bulk_extractor or MemProcFS, I couldn't find anything even though the stealer server received the stolen packets. This issue turned into a new idea for me with the logic of "if it got processed in memory, it should exist there." So I repeated the playtest and found out that my assumption was indeed correct: the ciphertext resides in the anonymous memory of the process.
 
 ### Initial Triage
 This challenge is a Linux memory forensics challenge. Of course you need its ISF to parse it using Vol3. But I'm not going to walk through that "regular" part because it's just an ordinary procedure whenever you triage a memory artifact.
@@ -16,7 +16,7 @@ This challenge is a Linux memory forensics challenge. Of course you need its ISF
 
 I'll just run that command to see what processes are running in the current state of the captured memory. I use that --remote-isf-url so vol3 can directly check the repo and automatically use it as the ISF that fits the memory dump.
 
-In the result of linux.pslist, there are two suspicious processes. One of them is intentionally a trap for sloppers who rely on automatic agentic AIs, and the other is a "decoy" that I put in the challenge.
+In the result of linux.pslist, there are two suspicious processes. One of them is intentionally a trap for sloppers who rely on automatic agentic AIs, and there are also anaother "decoy" that I put in the challenge.
 
 ```
 0x8eeb17da0000  11618   11618   7402    session-handler 0       0       0       0       2026-05-12 15:02:14.826227 UTC Disabled
@@ -238,7 +238,20 @@ offset  Session          OpsLease
 
 So if glibc hands the just-freed `Session` chunk back out for the next `OpsLease` allocation, whatever bytes you put into the `OpsLease` land at the same addresses the old `Session` used to occupy, including that last field, the function pointer.
 
-Menu option 7 is the one that actually gives you control over the bytes. It lets you send a raw hex blob that gets `decode_hex_blob`'d straight onto the freshly allocated `OpsLease`, byte for byte, with no validation on the function pointer field at all. So an attacker can craft a fake `OpsLease` where `completion_hook` (offset 0x48) is any address they want.
+There's actually a comment left in the source explaining why `prime_lease` uses `malloc` instead of `calloc` here:
+
+```c
+/*
+ * Deliberately use malloc + memset here instead of calloc. On Ubuntu 22.04
+ * glibc, calloc in this allocation pattern does not reliably hand back the
+ * just-freed Session chunk, which breaks the intended UAF overlap.
+ */
+lease = malloc(sizeof(*lease));
+```
+
+`calloc` on this glibc would sometimes not reuse the tcache entry the way `malloc` does, which would break the overlap. Small detail, but it's the difference between the exploit working every time or being flaky.
+
+Menu option 7 (`restore lease from hex template`) is the one that actually gives you control over the bytes. It lets you send a raw hex blob that gets `decode_hex_blob`'d straight onto the freshly allocated `OpsLease`, byte for byte, with no validation on the function pointer field at all. So an attacker can craft a fake `OpsLease` where `completion_hook` (offset 0x48) is any address they want.
 
 Offset 0x48 in the old `Session` layout is `status_cb`, the function pointer `run_status_callback` (menu option 3) blindly calls:
 
@@ -246,17 +259,7 @@ Offset 0x48 in the old `Session` layout is `status_cb`, the function pointer `ru
 g_active_session->status_cb(client_fd, g_active_session);
 ```
 
-`g_active_session` is still that stale pointer from before. After the overlap, the memory it points to isn't a `Session` anymore — it's the attacker's `OpsLease`, so `status_cb` at 0x48 is really whatever the attacker wrote as `completion_hook`. Call menu 3 and instead of getting CPU/RAM status back, you get a jump straight into attacker-controlled code.
-
-### Exploit Flow
-
-The address you want to jump into is the RWX scratch page (`g_rwx_page`), a 4KB `mmap(PROT_READ|WRITE|EXEC, MAP_PRIVATE|MAP_ANONYMOUS)` region the service sets up at startup for "staging maintenance blobs" (menu option 8). The binary itself is compiled `-no-pie`, so its own code and data sit at fixed addresses, but this page comes from an anonymous mmap, which still gets ASLR'd per run. That's why you can't hardcode it — you have to leak it first.
-
-Conveniently, menu option 8 (`write_to_rwx_page`) leaks it for free in its own response:
-
-```
-staged %d bytes into scratch page %p
-```
+`g_active_session` is still that stale pointer from before. After the overlap, the memory it points to isn't a `Session` anymore, it's the attacker's `OpsLease`, so `status_cb` at 0x48 is really whatever the attacker wrote as `completion_hook`. Call menu 3 and instead of getting CPU/RAM status back, you get a jump straight into attacker-controlled code.
 
 ### Finding the payload
 
