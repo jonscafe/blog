@@ -238,7 +238,7 @@ offset  Session          OpsLease
 
 So if glibc hands the just-freed `Session` chunk back out for the next `OpsLease` allocation, whatever bytes you put into the `OpsLease` land at the same addresses the old `Session` used to occupy, including that last field, the function pointer.
 
-Menu option 7 (`restore lease from hex template`) is the one that actually gives you control over the bytes. It lets you send a raw hex blob that gets `decode_hex_blob`'d straight onto the freshly allocated `OpsLease`, byte for byte, with no validation on the function pointer field at all. So an attacker can craft a fake `OpsLease` where `completion_hook` (offset 0x48) is any address they want.
+Menu option 7 is the one that actually gives you control over the bytes. It lets you send a raw hex blob that gets `decode_hex_blob`'d straight onto the freshly allocated `OpsLease`, byte for byte, with no validation on the function pointer field at all. So an attacker can craft a fake `OpsLease` where `completion_hook` (offset 0x48) is any address they want.
 
 Offset 0x48 in the old `Session` layout is `status_cb`, the function pointer `run_status_callback` (menu option 3) blindly calls:
 
