@@ -7,7 +7,7 @@ description: 'Write-up for a forensic challenge titled "It Wrecked (Again)" whic
 This challenge was the continuation of the Wreck IT 6.0 challenge titled "It Wrecked", which had a similar concept to this challenge (Linux forensics on a vulnerable binary).
 
 ### Background
-The idea for this challenge came when I was playtesting its intended behavior. While I was carving for stealer traffic evidence from the memory using tools like bulk_extractor or MemProcFS, I couldn't find anything even though the stealer server received the stolen packets. This issue turned into a new idea for me with the logic of "if it got processed in memory, it should exist there." So I repeated the playtest and found out that my assumption was indeed correct: the ciphertext resides in the anonymous memory of the process.
+The idea for this challenge came when I was playtesting its intended behavior. While I was carving for stealer traffic evidence from the memory using tools like bulk_extractor, I couldn't find anything even though the stealer server received the stolen packets. This issue turned into a new idea for me with the logic of "if it got processed in memory, it should exist there." So I repeated the playtest and found out that my assumption was indeed correct: the ciphertext resides in the anonymous memory of the process.
 
 ### Initial Triage
 This challenge is a Linux memory forensics challenge. Of course you need its ISF to parse it using Vol3. But I'm not going to walk through that "regular" part because it's just an ordinary procedure whenever you triage a memory artifact.
