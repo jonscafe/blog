@@ -246,7 +246,7 @@ Offset 0x48 in the old `Session` layout is `status_cb`, the function pointer `ru
 g_active_session->status_cb(client_fd, g_active_session);
 ```
 
-`g_active_session` is still that stale pointer from before. After the overlap, the memory it points to isn't a `Session` anymore — it's the attacker's `OpsLease`, so `status_cb` at 0x48 is really whatever the attacker wrote as `completion_hook`. Call menu 3 and instead of getting CPU/RAM status back, you get a jump straight into attacker-controlled code. A function-pointer overwrite via UAF, just wearing a "maintenance lease" costume.
+`g_active_session` is still that stale pointer from before. After the overlap, the memory it points to isn't a `Session` anymore — it's the attacker's `OpsLease`, so `status_cb` at 0x48 is really whatever the attacker wrote as `completion_hook`. Call menu 3 and instead of getting CPU/RAM status back, you get a jump straight into attacker-controlled code.
 
 ### Exploit Flow
 
@@ -257,8 +257,6 @@ Conveniently, menu option 8 (`write_to_rwx_page`) leaks it for free in its own r
 ```
 staged %d bytes into scratch page %p
 ```
-
-So the exploit flow is: stage a throwaway byte to leak the page address, compile the real shellcode with that address baked in as the KDF seed (more on that below), restage the real shellcode into the same page, check in, release, overlap with a crafted lease pointing `completion_hook` at `rwx_page + entry_offset`, then hit menu 3 to trigger it. `entry_offset` matters too: since the shellcode is built freestanding with `-nostdlib`, the helper functions (`kdf_derive`, `custom_encrypt`, `mem_wipe`) can end up placed before `_start` in the raw `.text` blob, so `_start` isn't necessarily byte 0 of the staged page. You have to resolve it (`nm` + `readelf`) and add it as an offset on top of the leaked base.
 
 ### Finding the payload
 
