@@ -1,5 +1,5 @@
 ---
-title: "Recovering Adversarial Evidence from Anonymous Memory - It Wrecked (Again) Write Up, Wreck IT 7.0 General Qualification"
+title: "Recovering Adversarial Evidence from Anonymous Memory - Wreck IT 7.0"
 pubDate: "2026-08-14"
 description: 'Write-up for a forensic challenge titled "It Wrecked (Again)" which I authored for Wreck IT 7.0 General Qualification.'
 ---
