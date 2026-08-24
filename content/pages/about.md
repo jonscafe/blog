@@ -42,6 +42,7 @@ I spend most of my time reverse engineering malware, analyzing forensic artifact
 | Cyber Specter's Cyber Hunt 2024 | Cyber Specters | Challenge Author |
 | Find IT CTF 2026 | DTETI FT UGM | Challenge Author |
 | GEMASTIK XVIII 2025 | Telkom University, Puspresnas | Challenge Author |
+| GEMASTIK XIX 2025 | BINUS University, Puspresnas | Challenge Author |
 | INTECHFEST 2025 | Bali State Polytechnic Computer Club | Challenge Author |
 | IT-Del CTF 2024 | Del Institute of Technology | Challenge Author, Infrastructure |
 | NETCOMP 2026 | FORKOMTRI SV UGM | Challenge Author |
