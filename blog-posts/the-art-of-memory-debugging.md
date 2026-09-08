@@ -173,14 +173,13 @@ And this gave me another insight; still using the same method, I'll search for t
 00000207`dea7b063  43 72 79 70 74 6f 67 72-61 70 68 79 00 4d 61 63  Cryptography.Mac
 ```
 
-Looking at the result, ```00000207`dea3a8eb``` and ```00000207`dea7b063``` were under these regions
+Looking at the result, ```00000207`dea7b063``` were under this region
 
 ```
-+      207`dea00000      207`dea02000        0`00002000 MEM_MAPPED  MEM_COMMIT  PAGE_READONLY                      Other      [Activation Context Data]
-+      207`dea02000      207`dea10000        0`0000e000             MEM_FREE    PAGE_NOACCESS                      Free       
+       207`dea7b000      207`dea88000        0`0000d000 MEM_MAPPED  MEM_COMMIT  PAGE_READONLY                      <unknown>  [basic.string..ap]
 ```
 
-And I dove deeper, turns out `Activation Context Data` are data structures in memory containing information that the system can use to redirect an application to load a particular DLL version, COM object instance, or custom window version (https://learn.microsoft.com/en-us/windows/win32/sbscs/activation-contexts). This gave me clearer proof to dump those regions even though they don't contain any MZ header, which is another known feature of Donut (https://github.com/thewover/donut#:~:text=Overwriting%20native%20PE%20headers), you can look it specifically in https://github.com/TheWover/donut/blob/master/loader/inmem_pe.c#L387.
+And I dove deeper, turns out this is another known feature of Donut (https://github.com/thewover/donut#:~:text=Overwriting%20native%20PE%20headers), you can look it specifically in https://github.com/TheWover/donut/blob/master/loader/inmem_pe.c#L387.
 
 After taking a look at the decompiled pseudocode, I think I got the right unpacked code of the shellcode.
 
