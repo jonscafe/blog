@@ -179,7 +179,7 @@ Looking at the result, ```00000207`dea7b063``` were under this region
        207`dea7b000      207`dea88000        0`0000d000 MEM_MAPPED  MEM_COMMIT  PAGE_READONLY                      <unknown>  [basic.string..ap]
 ```
 
-And I dove deeper, turns out this is another known feature of Donut (https://github.com/thewover/donut#:~:text=Overwriting%20native%20PE%20headers), you can look it specifically in https://github.com/TheWover/donut/blob/master/loader/inmem_pe.c#L387.
+And I dove deeper, turns out this is another known feature of Donut (https://github.com/thewover/donut#:~:text=Overwriting%20native%20PE%20headers). This feature deleted the MZ header of the injected PE, you can look it specifically in https://github.com/TheWover/donut/blob/master/loader/inmem_pe.c#L387.
 
 After taking a look at the decompiled pseudocode, I think I got the right unpacked code of the shellcode.
 
