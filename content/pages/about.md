@@ -45,6 +45,7 @@ I spend most of my time dissecting malware behavior and forensic artifacts, expl
 | GEMASTIK XIX 2026 | BINUS University, Puspresnas | Challenge Author |
 | INTECHFEST 2025 | Bali State Polytechnic Computer Club | Challenge Author |
 | IT-Del CTF 2024 | Del Institute of Technology | Challenge Author, Infrastructure |
+| JOINTS 2026 | HIMAKOM UGM | Challenge Author |
 | NETCOMP 2026 | FORKOMTRI SV UGM | Challenge Author |
 | Sanapati Cyberhunt 2024 | National Cyber and Crypto Polytechnic | Challenge Author, Organizer |
 | Sanapati Cyberhunt 2025 | National Cyber and Crypto Polytechnic | Challenge Author, Organizer |
